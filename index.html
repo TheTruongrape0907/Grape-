@@ -412,8 +412,8 @@
         }
 
         .shop {
-            position: absolute;
-            top: 25px;
+            position: fixed;
+            bottom: 140px;
             left: 25px;
             width: 200px;
             background: linear-gradient(135deg, rgba(52, 73, 94, 0.95), rgba(44, 62, 80, 0.95));
@@ -477,8 +477,8 @@
         }
 
         .recipes {
-            position: absolute;
-            top: 280px;
+            position: fixed;
+            bottom: 140px;
             right: 25px;
             width: 220px;
             background: linear-gradient(135deg, rgba(142, 68, 173, 0.95), rgba(125, 60, 152, 0.95));
@@ -488,6 +488,7 @@
             box-shadow: 0 12px 30px rgba(0,0,0,0.4);
             border: 3px solid #8E44AD;
             backdrop-filter: blur(10px);
+            z-index: 10;
         }
 
         .recipe-title {
