@@ -114,15 +114,13 @@
             top: 90px;
             left: 0;
             right: 0;
-            height: calc(100% - 210px);
+            bottom: 120px;
             background: 
                 radial-gradient(circle at 30% 40%, rgba(34, 139, 34, 0.8) 0%, transparent 50%),
                 radial-gradient(circle at 70% 60%, rgba(50, 205, 50, 0.6) 0%, transparent 50%),
                 linear-gradient(45deg, #228B22 0%, #32CD32 25%, #90EE90 50%, #32CD32 75%, #228B22 100%);
             overflow: auto;
             position: relative;
-            z-index: 1;
-            
         }
 
         /* Grass texture effect */
@@ -269,8 +267,8 @@
             box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
             border-top: 3px solid #34495E;
             padding: 0 10px;
-            flex-wrap: wrap;
-            z-index: 9999;
+            flex-wrap: wrap;’
+            z-index: 999;
         }
 
         .seed-btn {
@@ -411,9 +409,22 @@
             box-shadow: 0 6px 15px rgba(0,0,0,0.4);
         }
 
-        .shop {
-            position: fixed;
-            bottom: 140px;
+.shop {
+  position: fixed;
+  bottom: 140px;
+  left: 25px;
+  width: 200px;
+  background: linear-gradient(135deg, rgba(52, 73, 94, 0.95), rgba(44, 62, 80, 0.95));
+  border-radius: 20px;
+  padding: 20px;
+  color: white;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  border: 3px solid #34495E;
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+}
+            position: absolute;
+            top: 25px;
             left: 25px;
             width: 200px;
             background: linear-gradient(135deg, rgba(52, 73, 94, 0.95), rgba(44, 62, 80, 0.95));
@@ -458,7 +469,7 @@
             position: absolute;
             top: 120px;
             right: 25px;
-            background: linear-gradient(135deg, rgba(231, 76, 60, 0.95), rgba(192, 57, 43, 0.95));
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.95), rgba(39, 174, 96, 0.95));
             color: white;
             padding: 15px 20px;
             border-radius: 15px;
@@ -466,9 +477,15 @@
             display: none;
             max-width: 280px;
             font-weight: 600;
-            border: 2px solid #C0392B;
+            border: 2px solid #27AE60;
             backdrop-filter: blur(10px);
             animation: slideIn 0.5s ease;
+            z-index: 1000;
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.95), rgba(192, 57, 43, 0.95));
+            border-color: #C0392B;
         }
 
         @keyframes slideIn {
@@ -476,9 +493,23 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        .recipes {
-            position: fixed;
-            bottom: 140px;
+.recipes {
+  position: fixed;
+  bottom: 140px;
+  right: 25px;
+  width: 220px;
+  background: linear-gradient(135deg, rgba(142, 68, 173, 0.95), rgba(125, 60, 152, 0.95));
+  border-radius: 20px;
+  padding: 20px;
+  color: white;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  border: 3px solid #8E44AD;
+  backdrop-filter: blur(10px);
+  display: block !important;
+  z-index: 1000;
+}
+            position: absolute;
+            top: 280px;
             right: 25px;
             width: 220px;
             background: linear-gradient(135deg, rgba(142, 68, 173, 0.95), rgba(125, 60, 152, 0.95));
@@ -488,7 +519,6 @@
             box-shadow: 0 12px 30px rgba(0,0,0,0.4);
             border: 3px solid #8E44AD;
             backdrop-filter: blur(10px);
-            z-index: 10;
         }
 
         .recipe-title {
@@ -536,6 +566,35 @@
             z-index: 4;
         }
 
+        /* Game Instructions */
+        .instructions {
+            position: absolute;
+            bottom: 140px;
+            left: 25px;
+            width: 250px;
+            background: linear-gradient(135deg, rgba(41, 128, 185, 0.95), rgba(52, 152, 219, 0.95));
+            border-radius: 15px;
+            padding: 15px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            border: 2px solid #3498DB;
+            backdrop-filter: blur(5px);
+            font-size: 12px;
+        }
+
+        .instructions-title {
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #F1C40F;
+            font-family: 'Fredoka One', cursive;
+        }
+
+        .instruction-item {
+            margin-bottom: 5px;
+            padding: 3px 0;
+        }
+
         /* Responsive design */
         @media (max-width: 1200px) {
             .farm-grid {
@@ -550,6 +609,15 @@
             
             .crop {
                 font-size: 45px;
+            }
+
+            .shop, .recipes, .instructions {
+                display: none;
+            }
+
+            .juice-machine {
+                width: 150px;
+                height: 200px;
             }
         }
 
@@ -581,6 +649,21 @@
             .seed-btn {
                 padding: 8px 12px;
                 font-size: 13px;
+            }
+
+            .farm-grid {
+                grid-template-columns: repeat(4, 80px);
+                grid-template-rows: repeat(6, 80px);
+                gap: 10px;
+            }
+            
+            .plot {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .crop {
+                font-size: 35px;
             }
         }
     </style>
@@ -618,7 +701,7 @@
         </div>
 
         <!-- Juice Machine -->
-        <div class="juice-machine" onclick="showJuiceMachine()">
+        <div class="juice-machine">
             <div class="juice-machine-title">🧃 Máy Ép<br>Nước Ép</div>
             <select class="recipe-select" id="recipe-select">
                 <option value="green-grape-juice">Nước nho xanh</option>
@@ -640,6 +723,17 @@
                 <span>🍓 Dâu tây</span>
                 <span>$20</span>
             </div>
+        </div>
+
+        <!-- Game Instructions -->
+        <div class="instructions">
+            <div class="instructions-title">🎮 Hướng Dẫn</div>
+            <div class="instruction-item">1. Chọn hạt giống từ thanh dưới</div>
+            <div class="instruction-item">2. Click vào ô đất để trồng</div>
+            <div class="instruction-item">3. Cây chín sẽ nhảy nhót ✨</div>
+            <div class="instruction-item">4. Click thu hoạch trước khi héo</div>
+            <div class="instruction-item">5. Ép nước để kiếm tiền nhiều hơn</div>
+            <div class="instruction-item">6. Mua trái cây tại cửa hàng</div>
         </div>
 
         <!-- Recipes -->
@@ -682,51 +776,51 @@
         // Crop configurations
         const cropConfig = {
             'green-grape': {
-                emoji: '🍇',
+                emoji: '',
                 growTime: 8000,  // 8 seconds
                 sellPrice: 25,
                 seedCost: 0,
-                witherTime: 3000, // 3 seconds after ready
+                witherTime: 4000, // 4 seconds after ready
                 color: '#90EE90'
             },
             'black-grape': {
-                emoji: '🍇',
+                emoji: '',
                 growTime: 12000, // 12 seconds
                 sellPrice: 40,
                 seedCost: 50,
-                witherTime: 4000,
+                witherTime: 5000,
                 color: '#4B0082'
             },
             'purple-grape': {
-                emoji: '🍇',
+                emoji: '',
                 growTime: 15000, // 15 seconds
                 sellPrice: 60,
                 seedCost: 80,
-                witherTime: 4000,
+                witherTime: 5000,
                 color: '#800080'
             },
             'mango': {
-                emoji: '🥭',
+                emoji: '',
                 growTime: 20000, // 20 seconds
                 sellPrice: 80,
                 seedCost: 100,
-                witherTime: 5000,
+                witherTime: 6000,
                 color: '#FFD700'
             },
             'strawberry': {
-                emoji: '🍓',
+                emoji: '',
                 growTime: 10000, // 10 seconds
                 sellPrice: 35,
                 seedCost: 60,
-                witherTime: 3000,
+                witherTime: 4000,
                 color: '#FF69B4'
             },
             'lemon': {
-                emoji: '🍋',
+                emoji: '',
                 growTime: 6000,  // 6 seconds
                 sellPrice: 15,
                 seedCost: 0,
-                witherTime: 2000,
+                witherTime: 3000,
                 color: '#FFFF00'
             }
         };
@@ -755,11 +849,42 @@
             }
         };
 
+        // Sound effects (using Web Audio API)
+        const playSound = (frequency, duration, type = 'sine') => {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                oscillator.type = type;
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+            } catch (error) {
+                // Fallback for browsers that don't support Web Audio API
+                console.log('Sound effect played');
+            }
+        };
+
         // Initialize game
         function initGame() {
             createFarmPlots();
             updateUI();
             startGameLoop();
+            showWelcomeMessage();
+        }
+
+        function showWelcomeMessage() {
+            setTimeout(() => {
+                showNotification('🎉 Chào mừng đến với Fruit Farm Rush! Bắt đầu bằng việc trồng nho xanh hoặc chanh miễn phí!', 'success');
+            }, 1000);
         }
 
         function createFarmPlots() {
@@ -785,18 +910,30 @@
         function selectSeed(seedType) {
             const cost = cropConfig[seedType].seedCost;
             if (cost > 0 && gameState.money < cost) {
-                showNotification('💸 Không đủ tiền để mua hạt giống!');
+                showNotification('💸 Không đủ tiền để mua hạt giống!', 'error');
+                playSound(200, 0.2);
                 return;
             }
             
             gameState.selectedSeed = seedType;
             document.querySelectorAll('.seed-btn').forEach(btn => btn.classList.remove('selected'));
             event.target.classList.add('selected');
+            
+            const cropName = {
+                'green-grape': 'nho xanh',
+                'black-grape': 'nho đen', 
+                'purple-grape': 'nho tím',
+                'mango': 'xoài',
+                'strawberry': 'dâu tây',
+                'lemon': 'chanh'
+            };
+            
+            showNotification(`🌱 Đã chọn hạt giống ${cropName[seedType]}. Click vào ô đất để trồng!`, 'success');
+            playSound(440, 0.1);
         }
 
         function handlePlotClick(plotIndex) {
             const plot = gameState.plots[plotIndex];
-            const plotElement = document.getElementById(`plot-${plotIndex}`);
 
             if (plot.stage === 'empty' && gameState.selectedSeed) {
                 plantSeed(plotIndex);
@@ -804,6 +941,11 @@
                 harvestCrop(plotIndex);
             } else if (plot.stage === 'withered') {
                 clearPlot(plotIndex);
+            } else if (plot.stage === 'growing') {
+                const timeLeft = Math.ceil((plot.readyTime - Date.now()) / 1000);
+                showNotification(`⏰ Cây sẽ chín sau ${timeLeft} giây`, 'info');
+            } else if (plot.stage === 'empty' && !gameState.selectedSeed) {
+                showNotification('🌱 Hãy chọn hạt giống trước!', 'error');
             }
         }
 
@@ -814,7 +956,8 @@
             // Check if we have seeds or money
             if (config.seedCost > 0) {
                 if (gameState.money < config.seedCost) {
-                    showNotification('💸 Không đủ tiền!');
+                    showNotification('💸 Không đủ tiền!', 'error');
+                    playSound(200, 0.2);
                     return;
                 }
                 gameState.money -= config.seedCost;
@@ -831,7 +974,10 @@
 
             updatePlotDisplay(plotIndex);
             updateUI();
-            showNotification(`🌱 Đã trồng ${seedType.replace('-', ' ')}!`);
+            
+            const cropName = seedType.replace('-', ' ');
+            showNotification(`🌱 Đã trồng ${cropName}! Chờ ${config.growTime/1000}s để thu hoạch.`, 'success');
+            playSound(523, 0.15); // C note
         }
 
         function harvestCrop(plotIndex) {
@@ -854,7 +1000,8 @@
 
             updatePlotDisplay(plotIndex);
             updateUI();
-            showNotification(`✨ Thu hoạch thành công! +${config.sellPrice}`);
+            showNotification(`✨ Thu hoạch thành công! +${config.sellPrice}`, 'success');
+            playSound(659, 0.2); // E note
         }
 
         function clearPlot(plotIndex) {
@@ -865,13 +1012,13 @@
             plot.readyTime = null;
             plot.witherTime = null;
             updatePlotDisplay(plotIndex);
-            showNotification('🗑️ Đã dọn dẹp cây héo');
+            showNotification('🗑️ Đã dọn dẹp cây héo', 'info');
+            playSound(147, 0.1); // D note
         }
 
         function updatePlotDisplay(plotIndex) {
             const plot = gameState.plots[plotIndex];
             const plotElement = document.getElementById(`plot-${plotIndex}`);
-            const progressBar = plotElement.querySelector('.progress-fill');
 
             plotElement.className = 'plot';
             plotElement.innerHTML = '<div class="progress-bar"><div class="progress-fill"></div></div>';
@@ -933,15 +1080,18 @@
             
             // Check if we have enough ingredients
             let canMake = true;
+            let missingIngredients = [];
+            
             for (const [ingredient, amount] of Object.entries(recipe.ingredients)) {
                 if (gameState.inventory[ingredient] < amount) {
                     canMake = false;
-                    break;
+                    missingIngredients.push(`${ingredient.replace('-', ' ')}`);
                 }
             }
 
             if (!canMake) {
-                showNotification('❌ Không đủ nguyên liệu!');
+                showNotification(`❌ Thiếu nguyên liệu: ${missingIngredients.join(', ')}`, 'error');
+                playSound(200, 0.2);
                 return;
             }
 
@@ -954,29 +1104,44 @@
             gameState.money += recipe.price;
             
             updateUI();
-            showNotification(`🧃 Đã ép ${recipe.name}! +${recipe.price}`);
+            showNotification(`🧃 Đã ép ${recipe.name}! +${recipe.price}`, 'success');
+            playSound(784, 0.3); // G note
         }
 
         function buyFruit(fruitType, price) {
             if (gameState.money < price) {
-                showNotification('💸 Không đủ tiền!');
+                showNotification('💸 Không đủ tiền!', 'error');
+                playSound(200, 0.2);
                 return;
             }
 
             gameState.money -= price;
             gameState.inventory[fruitType]++;
             updateUI();
-            showNotification(`🛒 Mua thành công ${fruitType === 'mango' ? 'xoài' : 'dâu tây'}!`);
+            
+            const fruitNames = {
+                'mango': 'xoài',
+                'strawberry': 'dâu tây'
+            };
+            
+            showNotification(`🛒 Mua thành công ${fruitNames[fruitType]}!`, 'success');
+            playSound(880, 0.15); // A note
         }
 
-        function showNotification(message) {
+        function showNotification(message, type = 'info') {
             const notification = document.getElementById('notification');
             notification.textContent = message;
+            notification.className = 'notification';
+            
+            if (type === 'error') {
+                notification.classList.add('error');
+            }
+            
             notification.style.display = 'block';
             
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 3000);
+            }, 4000);
         }
 
         function startGameLoop() {
@@ -989,12 +1154,14 @@
                         plot.stage = 'ready';
                         needsUpdate = true;
                         updatePlotDisplay(index);
-                        showNotification('🎉 Cây đã chín! Hãy thu hoạch ngay!');
+                        showNotification('🎉 Cây đã chín! Hãy thu hoạch ngay trước khi héo!', 'success');
+                        playSound(698, 0.2); // F# note
                     } else if (plot.stage === 'ready' && now >= plot.witherTime) {
                         plot.stage = 'withered';
                         needsUpdate = true;
                         updatePlotDisplay(index);
-                        showNotification('💀 Cây đã héo! Hãy dọn dẹp và trồng lại.');
+                        showNotification('💀 Cây đã héo! Click để dọn dẹp và trồng lại.', 'error');
+                        playSound(110, 0.3); // Low A note
                     } else if (plot.stage === 'growing') {
                         updatePlotDisplay(index);
                     }
@@ -1003,10 +1170,52 @@
                 if (needsUpdate) {
                     updateUI();
                 }
-            }, 100);
+            }, 200); // Update every 200ms for smoother progress bars
         }
 
+        // Auto-save game state to localStorage
+        function saveGame() {
+            try {
+                localStorage.setItem('fruitFarmGameState', JSON.stringify(gameState));
+            } catch (error) {
+                console.log('Cannot save game state');
+            }
+        }
+
+        function loadGame() {
+            try {
+                const saved = localStorage.getItem('fruitFarmGameState');
+                if (saved) {
+                    const savedState = JSON.parse(saved);
+                    gameState = { ...gameState, ...savedState };
+                    showNotification('📁 Đã tải game đã lưu!', 'success');
+                }
+            } catch (error) {
+                console.log('Cannot load game state');
+            }
+        }
+
+        // Save game every 30 seconds
+        setInterval(saveGame, 30000);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (event) => {
+            const keyMap = {
+                '1': 'green-grape',
+                '2': 'black-grape', 
+                '3': 'purple-grape',
+                '4': 'mango',
+                '5': 'strawberry',
+                '6': 'lemon'
+            };
+            
+            if (keyMap[event.key]) {
+                selectSeed(keyMap[event.key]);
+            }
+        });
+
         // Start the game
+        loadGame();
         initGame();
     </script>
 </body>
