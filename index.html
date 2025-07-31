@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Farm Rush - Game Trồng Cây Ăn Quả</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Nunito:wght@400;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 30%, #90EE90 70%, #228B22 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated background clouds */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.3) 10%, transparent 10%),
+                radial-gradient(circle at 40% 20%, rgba(255,255,255,0.2) 15%, transparent 15%),
+                radial-gradient(circle at 90% 30%, rgba(255,255,255,0.25) 12%, transparent 12%),
+                radial-gradient(circle at 70% 80%, rgba(255,255,255,0.2) 18%, transparent 18%);
+            animation: cloudMove 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes cloudMove {
+            0%, 100% { transform: translateX(0px); }
+            50% { transform: translateX(30px); }
+        }
+
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ui-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 90px;
+            background: linear-gradient(135deg, #8B4513 0%, #CD853F 50%, #DEB887 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            border-bottom: 3px solid #654321;
+            position: relative;
+        }
+
+        .ui-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .money-display {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #8B4513;
+            font-size: 28px;
+            font-weight: 800;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            padding: 12px 20px;
+            border-radius: 15px;
+            border: 3px solid #FF8C00;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            font-family: 'Fredoka One', cursive;
+        }
+
+        .inventory {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .inventory-item {
+            background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
+            padding: 8px 12px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
+            font-size: 14px;
+        }
+
+        .farm-area {
+            position: absolute;
+            top: 90px;
+            left: 0;
+            right: 0;
+            bottom: 120px;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(34, 139, 34, 0.8) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(50, 205, 50, 0.6) 0%, transparent 50%),
+                linear-gradient(45deg, #228B22 0%, #32CD32 25%, #90EE90 50%, #32CD32 75%, #228B22 100%);
+            overflow: auto;
+            position: relative;
+        }
+
+        /* Grass texture effect */
+        .farm-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,100,0,0.1) 2px, rgba(0,100,0,0.1) 4px),
+                repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(0,150,0,0.1) 2px, rgba(0,150,0,0.1) 4px);
+            pointer-events: none;
+        }
+
+        .farm-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 110px);
+            grid-template-rows: repeat(6, 110px);
+            gap: 15px;
+            padding: 25px;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .plot {
+            width: 110px;
+            height: 110px;
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%);
+            border: 4px solid #654321;
+            border-radius: 15px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 8px 16px rgba(0,0,0,0.3),
+                inset 0 2px 4px rgba(255,255,255,0.2),
+                inset 0 -2px 4px rgba(0,0,0,0.2);
+            transform-style: preserve-3d;
+        }
+
+        .plot::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2) 0%, transparent 70%);
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .plot:hover {
+            transform: scale(1.08) rotateX(5deg);
+            box-shadow: 
+                0 12px 25px rgba(255,215,0,0.4),
+                0 0 20px rgba(255,215,0,0.3),
+                inset 0 2px 4px rgba(255,255,255,0.3);
+            border-color: #FFD700;
+        }
+
+        .plot.growing {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 30%, #228B22 100%);
+            border-color: #32CD32;
+            box-shadow: 
+                0 8px 16px rgba(0,0,0,0.3),
+                0 0 15px rgba(50,205,50,0.4);
+        }
+
+        .plot.ready {
+            background: linear-gradient(135deg, #8B4513 0%, #FFD700 50%, #FFA500 100%);
+            border-color: #FF8C00;
+            box-shadow: 
+                0 10px 20px rgba(0,0,0,0.4),
+                0 0 25px rgba(255,215,0,0.8);
+            animation: readyGlow 2s ease-in-out infinite alternate;
+        }
+
+        .plot.withered {
+            background: linear-gradient(135deg, #654321 0%, #8B0000 50%, #4B0000 100%);
+            border-color: #8B0000;
+            box-shadow: 
+                0 8px 16px rgba(0,0,0,0.4),
+                0 0 15px rgba(139,0,0,0.5);
+            animation: witherShake 0.8s ease-in-out infinite;
+        }
+
+        @keyframes readyGlow {
+            0% { box-shadow: 0 10px 20px rgba(0,0,0,0.4), 0 0 25px rgba(255,215,0,0.8); }
+            100% { box-shadow: 0 12px 25px rgba(0,0,0,0.5), 0 0 35px rgba(255,215,0,1); }
+        }
+
+        @keyframes witherShake {
+            0%, 100% { transform: translateX(0) rotateZ(0deg); }
+            25% { transform: translateX(-3px) rotateZ(-1deg); }
+            75% { transform: translateX(3px) rotateZ(1deg); }
+        }
+
+        .crop {
+            font-size: 55px;
+            transition: all 0.4s ease;
+            filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.4));
+            position: relative;
+            z-index: 3;
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            right: 8px;
+            height: 10px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF6B6B 0%, #4ECDC4 50%, #45B7D1 100%);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        .control-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #3498DB 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+            border-top: 3px solid #34495E;
+            padding: 0 10px;
+            flex-wrap: wrap;
+        }
+
+        .seed-btn {
+            padding: 12px 18px;
+            background: linear-gradient(135deg, #27AE60, #2ECC71, #58D68D);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            transition: all 0.4s ease;
+            box-shadow: 
+                0 6px 15px rgba(0,0,0,0.3),
+                inset 0 2px 4px rgba(255,255,255,0.2);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+            border: 2px solid #229954;
+            font-family: 'Nunito', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .seed-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .seed-btn:hover::before {
+            left: 100%;
+        }
+
+        .seed-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 10px 25px rgba(0,0,0,0.4),
+                0 0 20px rgba(46,204,113,0.4);
+        }
+
+        .seed-btn:disabled {
+            background: linear-gradient(135deg, #95A5A6, #7F8C8D);
+            cursor: not-allowed;
+            transform: none;
+            border-color: #7F8C8D;
+        }
+
+        .seed-btn.selected {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+            border-color: #A93226;
+            box-shadow: 
+                0 6px 15px rgba(0,0,0,0.4),
+                0 0 20px rgba(231,76,60,0.6);
+        }
+
+        .juice-machine {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            width: 180px;
+            height: 240px;
+            background: linear-gradient(135deg, #E74C3C 0%, #C0392B 50%, #A93226 100%);
+            border-radius: 20px;
+            box-shadow: 
+                0 12px 30px rgba(0,0,0,0.4),
+                inset 0 4px 8px rgba(255,255,255,0.2),
+                inset 0 -4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 3px solid #922B21;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .juice-machine::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            height: 40px;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, transparent 70%);
+            border-radius: 15px;
+            pointer-events: none;
+        }
+
+        .juice-machine:hover {
+            transform: scale(1.08) rotateY(5deg);
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.5),
+                0 0 30px rgba(231,76,60,0.4);
+        }
+
+        .juice-machine-title {
+            color: white;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            font-size: 16px;
+            font-family: 'Fredoka One', cursive;
+        }
+
+        .recipe-select {
+            width: 140px;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .process-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #F39C12, #E67E22);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .process-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+        }
+
+        .shop {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            width: 200px;
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.95), rgba(44, 62, 80, 0.95));
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            border: 3px solid #34495E;
+            backdrop-filter: blur(10px);
+        }
+
+        .shop-title {
+            text-align: center;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #F39C12;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            font-family: 'Fredoka One', cursive;
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .shop-item:hover {
+            background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.15));
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .notification {
+            position: absolute;
+            top: 120px;
+            right: 25px;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.95), rgba(192, 57, 43, 0.95));
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            display: none;
+            max-width: 280px;
+            font-weight: 600;
+            border: 2px solid #C0392B;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .recipes {
+            position: absolute;
+            top: 280px;
+            right: 25px;
+            width: 220px;
+            background: linear-gradient(135deg, rgba(142, 68, 173, 0.95), rgba(125, 60, 152, 0.95));
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            border: 3px solid #8E44AD;
+            backdrop-filter: blur(10px);
+        }
+
+        .recipe-title {
+            text-align: center;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #F1C40F;
+            font-size: 16px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            font-family: 'Fredoka One', cursive;
+        }
+
+        .recipe-item {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 60%, 100% { transform: translateY(0) scale(1); }
+            40% { transform: translateY(-15px) scale(1.1); }
+            80% { transform: translateY(-8px) scale(1.05); }
+        }
+
+        .ready .crop {
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.7; transform: scale(1.2) rotate(180deg); }
+        }
+
+        .plot.ready::after {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 20px;
+            animation: sparkle 1s infinite;
+            z-index: 4;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .farm-grid {
+                grid-template-columns: repeat(6, 100px);
+                grid-template-rows: repeat(8, 100px);
+            }
+            
+            .plot {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .crop {
+                font-size: 45px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ui-panel {
+                height: 70px;
+                padding: 0 15px;
+            }
+            
+            .money-display {
+                font-size: 20px;
+                padding: 8px 15px;
+            }
+            
+            .inventory {
+                gap: 8px;
+            }
+            
+            .inventory-item {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+            
+            .control-panel {
+                height: 100px;
+                gap: 10px;
+            }
+            
+            .seed-btn {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- UI Panel -->
+        <div class="ui-panel">
+            <div class="money-display">💰 $<span id="money">500</span></div>
+            <div class="inventory">
+                <div class="inventory-item">🍇 Nho xanh: <span id="green-grapes">0</span></div>
+                <div class="inventory-item">🍇 Nho đen: <span id="black-grapes">0</span></div>
+                <div class="inventory-item">🍇 Nho tím: <span id="purple-grapes">0</span></div>
+                <div class="inventory-item">🥭 Xoài: <span id="mango">0</span></div>
+                <div class="inventory-item">🍓 Dâu: <span id="strawberry">0</span></div>
+                <div class="inventory-item">🍋 Chanh: <span id="lemon">0</span></div>
+            </div>
+        </div>
+
+        <!-- Farm Area -->
+        <div class="farm-area">
+            <div class="farm-grid" id="farm-grid">
+                <!-- Plots will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <button class="seed-btn" onclick="selectSeed('green-grape')">🍇 Nho xanh (Miễn phí)</button>
+            <button class="seed-btn" onclick="selectSeed('black-grape')" id="black-grape-btn">🍇 Nho đen ($50)</button>
+            <button class="seed-btn" onclick="selectSeed('purple-grape')" id="purple-grape-btn">🍇 Nho tím ($80)</button>
+            <button class="seed-btn" onclick="selectSeed('mango')" id="mango-btn">🥭 Xoài ($100)</button>
+            <button class="seed-btn" onclick="selectSeed('strawberry')" id="strawberry-btn">🍓 Dâu ($60)</button>
+            <button class="seed-btn" onclick="selectSeed('lemon')" id="lemon-btn">🍋 Chanh (Miễn phí)</button>
+        </div>
+
+        <!-- Juice Machine -->
+        <div class="juice-machine" onclick="showJuiceMachine()">
+            <div class="juice-machine-title">🧃 Máy Ép<br>Nước Ép</div>
+            <select class="recipe-select" id="recipe-select">
+                <option value="green-grape-juice">Nước nho xanh</option>
+                <option value="mixed-grape-juice">Nước nho tổng hợp</option>
+                <option value="tropical-juice">Nước ép nhiệt đới</option>
+                <option value="citrus-juice">Nước chanh</option>
+            </select>
+            <button class="process-btn" onclick="processJuice()">Ép nước</button>
+        </div>
+
+        <!-- Shop -->
+        <div class="shop">
+            <div class="shop-title">🏪 Cửa Hàng</div>
+            <div class="shop-item" onclick="buyFruit('mango', 30)">
+                <span>🥭 Xoài</span>
+                <span>$30</span>
+            </div>
+            <div class="shop-item" onclick="buyFruit('strawberry', 20)">
+                <span>🍓 Dâu tây</span>
+                <span>$20</span>
+            </div>
+        </div>
+
+        <!-- Recipes -->
+        <div class="recipes">
+            <div class="recipe-title">📜 Công Thức</div>
+            <div class="recipe-item">🍇 Nước nho xanh: 3 nho xanh = $80</div>
+            <div class="recipe-item">🍇 Nước nho tổng hợp: 2 nho đen + 1 nho tím = $150</div>
+            <div class="recipe-item">🧃 Nước ép nhiệt đới: 2 xoài + 1 dâu = $200</div>
+            <div class="recipe-item">🍋 Nước chanh: 4 chanh = $60</div>
+        </div>
+
+        <!-- Notification -->
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <script>
+        // Game state
+        let gameState = {
+            money: 500,
+            selectedSeed: null,
+            inventory: {
+                'green-grapes': 0,
+                'black-grapes': 0,
+                'purple-grapes': 0,
+                'mango': 0,
+                'strawberry': 0,
+                'lemon': 0
+            },
+            plots: [],
+            seeds: {
+                'green-grape': 5,  // Start with 5 free seeds
+                'black-grape': 0,
+                'purple-grape': 0,
+                'mango': 0,
+                'strawberry': 0,
+                'lemon': 5   // Start with 5 free seeds
+            }
+        };
+
+        // Crop configurations
+        const cropConfig = {
+            'green-grape': {
+                emoji: '🍇',
+                growTime: 8000,  // 8 seconds
+                sellPrice: 25,
+                seedCost: 0,
+                witherTime: 3000, // 3 seconds after ready
+                color: '#90EE90'
+            },
+            'black-grape': {
+                emoji: '🍇',
+                growTime: 12000, // 12 seconds
+                sellPrice: 40,
+                seedCost: 50,
+                witherTime: 4000,
+                color: '#4B0082'
+            },
+            'purple-grape': {
+                emoji: '🍇',
+                growTime: 15000, // 15 seconds
+                sellPrice: 60,
+                seedCost: 80,
+                witherTime: 4000,
+                color: '#800080'
+            },
+            'mango': {
+                emoji: '🥭',
+                growTime: 20000, // 20 seconds
+                sellPrice: 80,
+                seedCost: 100,
+                witherTime: 5000,
+                color: '#FFD700'
+            },
+            'strawberry': {
+                emoji: '🍓',
+                growTime: 10000, // 10 seconds
+                sellPrice: 35,
+                seedCost: 60,
+                witherTime: 3000,
+                color: '#FF69B4'
+            },
+            'lemon': {
+                emoji: '🍋',
+                growTime: 6000,  // 6 seconds
+                sellPrice: 15,
+                seedCost: 0,
+                witherTime: 2000,
+                color: '#FFFF00'
+            }
+        };
+
+        // Juice recipes
+        const juiceRecipes = {
+            'green-grape-juice': {
+                ingredients: { 'green-grapes': 3 },
+                price: 80,
+                name: 'Nước nho xanh'
+            },
+            'mixed-grape-juice': {
+                ingredients: { 'black-grapes': 2, 'purple-grapes': 1 },
+                price: 150,
+                name: 'Nước nho tổng hợp'
+            },
+            'tropical-juice': {
+                ingredients: { 'mango': 2, 'strawberry': 1 },
+                price: 200,
+                name: 'Nước ép nhiệt đới'
+            },
+            'citrus-juice': {
+                ingredients: { 'lemon': 4 },
+                price: 60,
+                name: 'Nước chanh'
+            }
+        };
+
+        // Initialize game
+        function initGame() {
+            createFarmPlots();
+            updateUI();
+            startGameLoop();
+        }
+
+        function createFarmPlots() {
+            const farmGrid = document.getElementById('farm-grid');
+            for (let i = 0; i < 48; i++) { // 8x6 grid
+                const plot = document.createElement('div');
+                plot.className = 'plot';
+                plot.id = `plot-${i}`;
+                plot.innerHTML = '<div class="progress-bar"><div class="progress-fill"></div></div>';
+                plot.addEventListener('click', () => handlePlotClick(i));
+                farmGrid.appendChild(plot);
+                
+                gameState.plots[i] = {
+                    crop: null,
+                    stage: 'empty',
+                    plantTime: null,
+                    readyTime: null,
+                    witherTime: null
+                };
+            }
+        }
+
+        function selectSeed(seedType) {
+            const cost = cropConfig[seedType].seedCost;
+            if (cost > 0 && gameState.money < cost) {
+                showNotification('💸 Không đủ tiền để mua hạt giống!');
+                return;
+            }
+            
+            gameState.selectedSeed = seedType;
+            document.querySelectorAll('.seed-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        function handlePlotClick(plotIndex) {
+            const plot = gameState.plots[plotIndex];
+            const plotElement = document.getElementById(`plot-${plotIndex}`);
+
+            if (plot.stage === 'empty' && gameState.selectedSeed) {
+                plantSeed(plotIndex);
+            } else if (plot.stage === 'ready') {
+                harvestCrop(plotIndex);
+            } else if (plot.stage === 'withered') {
+                clearPlot(plotIndex);
+            }
+        }
+
+        function plantSeed(plotIndex) {
+            const seedType = gameState.selectedSeed;
+            const config = cropConfig[seedType];
+            
+            // Check if we have seeds or money
+            if (config.seedCost > 0) {
+                if (gameState.money < config.seedCost) {
+                    showNotification('💸 Không đủ tiền!');
+                    return;
+                }
+                gameState.money -= config.seedCost;
+            }
+
+            const plot = gameState.plots[plotIndex];
+            const now = Date.now();
+            
+            plot.crop = seedType;
+            plot.stage = 'growing';
+            plot.plantTime = now;
+            plot.readyTime = now + config.growTime;
+            plot.witherTime = plot.readyTime + config.witherTime;
+
+            updatePlotDisplay(plotIndex);
+            updateUI();
+            showNotification(`🌱 Đã trồng ${seedType.replace('-', ' ')}!`);
+        }
+
+        function harvestCrop(plotIndex) {
+            const plot = gameState.plots[plotIndex];
+            const config = cropConfig[plot.crop];
+            
+            // Add to inventory
+            const inventoryKey = plot.crop.replace('-', '-') + 's';
+            gameState.inventory[inventoryKey]++;
+            
+            // Add money
+            gameState.money += config.sellPrice;
+            
+            // Clear plot
+            plot.crop = null;
+            plot.stage = 'empty';
+            plot.plantTime = null;
+            plot.readyTime = null;
+            plot.witherTime = null;
+
+            updatePlotDisplay(plotIndex);
+            updateUI();
+            showNotification(`✨ Thu hoạch thành công! +${config.sellPrice}`);
+        }
+
+        function clearPlot(plotIndex) {
+            const plot = gameState.plots[plotIndex];
+            plot.crop = null;
+            plot.stage = 'empty';
+            plot.plantTime = null;
+            plot.readyTime = null;
+            plot.witherTime = null;
+            updatePlotDisplay(plotIndex);
+            showNotification('🗑️ Đã dọn dẹp cây héo');
+        }
+
+        function updatePlotDisplay(plotIndex) {
+            const plot = gameState.plots[plotIndex];
+            const plotElement = document.getElementById(`plot-${plotIndex}`);
+            const progressBar = plotElement.querySelector('.progress-fill');
+
+            plotElement.className = 'plot';
+            plotElement.innerHTML = '<div class="progress-bar"><div class="progress-fill"></div></div>';
+
+            if (plot.stage === 'empty') {
+                return;
+            }
+
+            const config = cropConfig[plot.crop];
+            const now = Date.now();
+
+            if (plot.stage === 'growing') {
+                plotElement.classList.add('growing');
+                const progress = Math.min((now - plot.plantTime) / (plot.readyTime - plot.plantTime), 1);
+                plotElement.querySelector('.progress-fill').style.width = (progress * 100) + '%';
+                
+                if (progress < 0.3) {
+                    plotElement.innerHTML += '<div class="crop">🌱</div>';
+                } else if (progress < 0.7) {
+                    plotElement.innerHTML += '<div class="crop">🌿</div>';
+                } else {
+                    plotElement.innerHTML += `<div class="crop" style="filter: grayscale(30%) brightness(0.8)">${config.emoji}</div>`;
+                }
+            } else if (plot.stage === 'ready') {
+                plotElement.classList.add('ready');
+                plotElement.innerHTML += `<div class="crop">${config.emoji}</div>`;
+                plotElement.querySelector('.progress-fill').style.width = '100%';
+            } else if (plot.stage === 'withered') {
+                plotElement.classList.add('withered');
+                plotElement.innerHTML += '<div class="crop">💀</div>';
+                plotElement.querySelector('.progress-fill').style.width = '0%';
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('money').textContent = gameState.money;
+            
+            // Update inventory display
+            Object.keys(gameState.inventory).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = gameState.inventory[key];
+                }
+            });
+
+            // Update seed button states
+            Object.keys(cropConfig).forEach(seedType => {
+                const btn = document.getElementById(seedType + '-btn');
+                if (btn) {
+                    const config = cropConfig[seedType];
+                    btn.disabled = config.seedCost > 0 && gameState.money < config.seedCost;
+                }
+            });
+        }
+
+        function processJuice() {
+            const recipeId = document.getElementById('recipe-select').value;
+            const recipe = juiceRecipes[recipeId];
+            
+            // Check if we have enough ingredients
+            let canMake = true;
+            for (const [ingredient, amount] of Object.entries(recipe.ingredients)) {
+                if (gameState.inventory[ingredient] < amount) {
+                    canMake = false;
+                    break;
+                }
+            }
+
+            if (!canMake) {
+                showNotification('❌ Không đủ nguyên liệu!');
+                return;
+            }
+
+            // Consume ingredients
+            for (const [ingredient, amount] of Object.entries(recipe.ingredients)) {
+                gameState.inventory[ingredient] -= amount;
+            }
+
+            // Add money
+            gameState.money += recipe.price;
+            
+            updateUI();
+            showNotification(`🧃 Đã ép ${recipe.name}! +${recipe.price}`);
+        }
+
+        function buyFruit(fruitType, price) {
+            if (gameState.money < price) {
+                showNotification('💸 Không đủ tiền!');
+                return;
+            }
+
+            gameState.money -= price;
+            gameState.inventory[fruitType]++;
+            updateUI();
+            showNotification(`🛒 Mua thành công ${fruitType === 'mango' ? 'xoài' : 'dâu tây'}!`);
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function startGameLoop() {
+            setInterval(() => {
+                const now = Date.now();
+                let needsUpdate = false;
+
+                gameState.plots.forEach((plot, index) => {
+                    if (plot.stage === 'growing' && now >= plot.readyTime) {
+                        plot.stage = 'ready';
+                        needsUpdate = true;
+                        updatePlotDisplay(index);
+                        showNotification('🎉 Cây đã chín! Hãy thu hoạch ngay!');
+                    } else if (plot.stage === 'ready' && now >= plot.witherTime) {
+                        plot.stage = 'withered';
+                        needsUpdate = true;
+                        updatePlotDisplay(index);
+                        showNotification('💀 Cây đã héo! Hãy dọn dẹp và trồng lại.');
+                    } else if (plot.stage === 'growing') {
+                        updatePlotDisplay(index);
+                    }
+                });
+
+                if (needsUpdate) {
+                    updateUI();
+                }
+            }, 100);
+        }
+
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>
